@@ -1,41 +1,77 @@
-cmake_minimum_required(VERSION 3.5)
-project(HelloGL VERSION 0.1.0)
+cmake_minimum_required(VERSION 3.16)
 
-# 使用 C++ 17 标准
+project(MindLens VERSION 0.1 LANGUAGES CXX)
+
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# 设置代码文件
-set(SRC_DIR ${PROJECT_SOURCE_DIR}/src/)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools)
 
-# 添加头文件
-set(GLAD_DIR ${PROJECT_SOURCE_DIR}/include)
-set(HEADER_DIR ${PROJECT_SOURCE_DIR}/include/glad)
-set(HEADER_DIR ${PROJECT_SOURCE_DIR}/include/GLFW)
-set(HEADER_DIR ${PROJECT_SOURCE_DIR}/include/ImageController)
-set(HEADER_DIR ${PROJECT_SOURCE_DIR}/include/ImageModel)
-set(HEADER_DIR ${PROJECT_SOURCE_DIR}/include/ImageView)
-set(LIB_DIR ${PROJECT_SOURCE_DIR}/lib/)
-include_directories(
-    ${PROJECT_SOURCE_DIR}/include
+set(TS_FILES MindLens_zh_CN.ts)
+
+set(PROJECT_SOURCES
+        main.cpp
+        mainwindow.cpp
+        mainwindow.h
+        mainwindow.ui
+        ${TS_FILES}
 )
 
-# 添加目标链接
-set(GLFW_LINK ${LIB_DIR}libglfw.3.dylib)
-link_libraries(${GLFW_LINK})
+if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+    qt_add_executable(MindLens
+        MANUAL_FINALIZATION
+        ${PROJECT_SOURCES}
+    )
+# Define target properties for Android with Qt 6 as:
+#    set_property(TARGET MindLens APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
+#                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
+# For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
 
-# 执行编译命令
-set(SOURCES ${SRC_DIR}glad.c ${SRC_DIR}main.cpp ${SRC_DIR}ImageController.cpp ${SRC_DIR}ImageModel.cpp ${SRC_DIR}ImageView.cpp)
-add_executable(HelloGL ${SOURCES})
+    qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
+else()
+    if(ANDROID)
+        add_library(MindLens SHARED
+            ${PROJECT_SOURCES}
+        )
+# Define properties for Android with Qt 5 after find_package() calls as:
+#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
+    else()
+        add_executable(MindLens
+            ${PROJECT_SOURCES}
+        )
+    endif()
 
-# 链接系统的 OpenGL 框架
-if (APPLE)
-    target_link_libraries(HelloGL "-framework OpenGL")
+    qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 endif()
 
-include(CTest)
-enable_testing()
+target_link_libraries(MindLens PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
-set(CPACK_PROJECT_NAME ${PROJECT_NAME})
-set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
-include(CPack)
+# Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
+# If you are developing for iOS or macOS you should consider setting an
+# explicit, fixed bundle identifier manually though.
+if(${QT_VERSION} VERSION_LESS 6.1.0)
+  set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.MindLens)
+endif()
+set_target_properties(MindLens PROPERTIES
+    ${BUNDLE_ID_OPTION}
+    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
+    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+    MACOSX_BUNDLE TRUE
+    WIN32_EXECUTABLE TRUE
+)
 
+include(GNUInstallDirs)
+install(TARGETS MindLens
+    BUNDLE DESTINATION .
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+
+if(QT_VERSION_MAJOR EQUAL 6)
+    qt_finalize_executable(MindLens)
+endif()
