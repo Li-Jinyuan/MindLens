@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+    <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+        <widget class="QLabel" name="imageLabel">
+          <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+            </sizepolicy>
+          </property>
+          <property name="text">
+            <string>请选择图片</string>
+          </property>
+          <property name="alignment">
+            <set>Qt::AlignCenter</set>
+          </property>
+        </widget>
+      </item>
+      <item>
+        <layout class="QHBoxLayout" name="rgbControls">
+          <item>
+            <widget class="QLabel" name="redLabel">
+              <property name="text">
+                <string>R:</string>
+              </property>
+            </widget>
+          </item>
+          <item>
+            <widget class="QSlider" name="redSlider">
+              <property name="minimum">
+                <number>-255</number>
+              </property>
+              <property name="maximum">
+                <number>255</number>
+              </property>
+              <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+              </property>
+            </widget>
+          </item>
+          <item>
+            <widget class="QLabel" name="redValueLabel">
+              <property name="text">
+                <string>0</string>
+              </property>
+            </widget>
+          </item>
+          <item>
+            <widget class="QLabel" name="greenLabel">
+              <property name="text">
+                <string>G:</string>
+              </property>
+            </widget>
+          </item>
+          <item>
+            <widget class="QSlider" name="greenSlider">
+              <property name="minimum">
+                <number>-255</number>
+              </property>
+              <property name="maximum">
+                <number>255</number>
+              </property>
+              <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+              </property>
+            </widget>
+          </item>
+          <item>
+            <widget class="QLabel" name="greenValueLabel">
+              <property name="text">
+                <string>0</string>
+              </property>
+            </widget>
+          </item>
+          <item>
+            <widget class="QLabel" name="blueLabel">
+              <property name="text">
+                <string>B:</string>
+              </property>
+            </widget>
+          </item>
+          <item>
+            <widget class="QSlider" name="blueSlider">
+              <property name="minimum">
+                <number>-255</number>
+              </property>
+              <property name="maximum">
+                <number>255</number>
+              </property>
+              <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+              </property>
+            </widget>
+          </item>
+          <item>
+            <widget class="QLabel" name="blueValueLabel">
+              <property name="text">
+                <string>0</string>
+              </property>
+            </widget>
+          </item>
+        </layout>
+      </item>
+      <item>
+        <layout class="QHBoxLayout" name="sizeControls">
+          <item>
+            <widget class="QLabel" name="widthLabel">
+              <property name="text">
+                <string>宽度:</string>
+              </property>
+            </widget>
+          </item>
+          <item>
+            <widget class="QLineEdit" name="widthInput"/>
+          </item>
+          <item>
+            <widget class="QLabel" name="heightLabel">
+              <property name="text">
+                <string>高度:</string>
+              </property>
+            </widget>
+          </item>
+          <item>
+            <widget class="QLineEdit" name="heightInput"/>
+          </item>
+          <item>
+            <widget class="QPushButton" name="applyButton">
+              <property name="text">
+                <string>应用</string>
+              </property>
+            </widget>
+          </item>
+        </layout>
+      </item>
+      <item>
+        <widget class="QPushButton" name="selectImageButton">
+          <property name="text">
+            <string>选择图片</string>
+          </property>
+        </widget>
+      </item>
+    </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>38</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

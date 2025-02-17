@@ -1,65 +1,73 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.5)
 
-project(MindLens VERSION 0.1 LANGUAGES CXX)
+project(MindLens LANGUAGES CXX)
+
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools)
 
-set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${CMAKE_SOURCE_DIR}/ui)
-set(CMAKE_AUTOUIC_SEARCH_PATHS ${CMAKE_SOURCE_DIR}/ui)
-
-set(TS_FILES translations/MindLens_zh_CN.ts)
+include_directories(
+    ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/include/controller
+    ${CMAKE_SOURCE_DIR}/include/model
+    ${CMAKE_SOURCE_DIR}/include/view
+    ${CMAKE_BINARY_DIR}
+    ${CMAKE_SOURCE_DIR}/src/ui
+)
 
 set(PROJECT_SOURCES
-    src/main.cpp
-    src/mainwindow.cpp
-    include/mainwindow.h
-    ui/mainwindow.ui
-    ${TS_FILES}
+    src/view/main.cpp
+    src/view/mainwindow.cpp
+    src/model/imagemodel.cpp
+    src/controller/maincontroller.cpp
+)
+
+set(PROJECT_HEADERS
+    include/view/mainwindow.h
+    include/model/imagemodel.h
+    include/controller/maincontroller.h
+)
+
+set(PROJECT_FORMS
+    ${CMAKE_SOURCE_DIR}/src/view/mainwindow.ui
+)
+
+set(PROJECT_TRANSLATIONS
+    ${CMAKE_SOURCE_DIR}/translations/MindLens_zh_CN.ts
+)
+
+set(PROJECT_RESOURCES
+    ${CMAKE_SOURCE_DIR}/resources
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(MindLens
-        MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
+        ${PROJECT_HEADERS}
+        ${PROJECT_FORMS}
     )
-    qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 else()
-    if(ANDROID)
-        add_library(MindLens SHARED
-            ${PROJECT_SOURCES}
-        )
-    else()
-        add_executable(MindLens
-            ${PROJECT_SOURCES}
-        )
+    if(CMAKE_VERSION VERSION_LESS "3.7.0")
+        set(CMAKE_INCLUDE_CURRENT_DIR ON)
     endif()
 
-    qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
+    add_executable(MindLens
+        ${PROJECT_SOURCES}
+        ${PROJECT_HEADERS}
+        ${PROJECT_FORMS}
+    )
 endif()
 
-target_include_directories(MindLens PRIVATE include)
 target_link_libraries(MindLens PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
-set_target_properties(MindLens PROPERTIES
-    MACOSX_BUNDLE TRUE
-    WIN32_EXECUTABLE TRUE
-)
+qt_add_translations(MindLens TS_FILES ${PROJECT_TRANSLATIONS})
 
-include(GNUInstallDirs)
-install(TARGETS MindLens
-    BUNDLE DESTINATION .
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-)
-
-if(QT_VERSION_MAJOR EQUAL 6)
-    qt_finalize_executable(MindLens)
-endif()
+file(COPY ${PROJECT_RESOURCES} DESTINATION ${CMAKE_BINARY_DIR})
